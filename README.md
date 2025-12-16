@@ -178,7 +178,7 @@ Personal portfolio - use as reference or template with attribution.
 ## Contact
 
 - **Email**: [mo@akamaar.dev](mailto:mo@akamaar.dev)
-- **Portfolio**: [mohammedessam.dev](https://mohammedessam.dev)
+- **Portfolio**: [mohammedessam.dev](https://mohammedeabdelaziz.github.io/)
 - **LinkedIn**: [Mohammed Essam Abdelaziz](https://linkedin.com/in/mohammed-essam-abdelaziz/)
 - **GitHub**: [MohammedEAbdelAziz](https://github.com/MohammedEAbdelAziz)
 - **Agency**: [Akamaar Dev](https://akamaar.dev)
