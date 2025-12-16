@@ -1,0 +1,111 @@
+---
+title: "Getting Started with Svelte 5 and Runes"
+date: "2025-12-1"
+tags: ["Svelte", "JavaScript", "Runes"]
+excerpt: "A comprehensive guide to building reactive components with Svelte 5's new runes system."
+---
+
+## Introduction
+
+Svelte 5 introduces a powerful new feature called "runes" that makes reactivity in Svelte even more straightforward and intuitive. In this post, we'll explore what runes are and how to use them in your projects.
+
+## What are Runes?
+
+Runes are special Svelte functions that provide granular reactivity. They give you fine-grained control over reactive state, effects, and derived values without needing to understand Svelte's internal reactivity system.
+
+## Basic Runes
+
+### `$state`
+
+The `$state` rune creates reactive state:
+
+```svelte
+<script lang="ts">
+  let count = $state(0);
+
+  function increment() {
+    count++;
+  }
+</script>
+
+<button onclick={increment}>
+  Count: {count}
+</button>
+```
+
+### `$derived`
+
+The `$derived` rune creates computed reactive values:
+
+```svelte
+<script lang="ts">
+  let count = $state(0);
+  let doubled = $derived(count * 2);
+</script>
+
+<p>{count} * 2 = {doubled}</p>
+```
+
+### `$effect`
+
+The `$effect` rune runs side effects reactively:
+
+```svelte
+<script lang="ts">
+  let name = $state("World");
+
+  $effect(() => {
+    document.title = `Hello, ${name}!`;
+  });
+</script>
+
+<input bind:value={name} />
+```
+
+## Advanced Patterns
+
+### Object Reactivity
+
+You can make entire objects reactive:
+
+```svelte
+<script lang="ts">
+  let user = $state({ name: "John", age: 30 });
+
+  function incrementAge() {
+    user.age++;
+  }
+</script>
+
+<p>{user.name} is {user.age} years old</p>
+<button onclick={incrementAge}>Increment Age</button>
+```
+
+### Derived Objects
+
+Create complex derived values from reactive state:
+
+```svelte
+<script lang="ts">
+  let person = $state({ firstName: "John", lastName: "Doe" });
+  
+  let fullName = $derived(
+    `${person.firstName} ${person.lastName}`
+  );
+</script>
+
+<p>Full name: {fullName}</p>
+```
+
+## Best Practices
+
+1. **Keep runes at the component level** - Define `$state` at the top of your component script
+2. **Use `$derived` for computed values** - Don't manually update derived values
+3. **Be explicit with `$effect`** - Clearly define dependencies and side effects
+4. **Avoid unnecessary reactivity** - Only make data reactive if it changes frequently
+
+## Conclusion
+
+Svelte 5's runes make reactive programming simple and intuitive. They remove the need for understanding how Svelte's reactivity system works internally, allowing you to focus on building great applications.
+
+Happy coding with Svelte 5! 
