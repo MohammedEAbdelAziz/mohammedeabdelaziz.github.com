@@ -8,6 +8,14 @@
 	);
 </script>
 
+<svelte:head>
+	<title>Articles - Mohammed Essam</title>
+	<meta
+		name="description"
+		content="Read articles by Mohammed Essam on various topics including web development, programming, and technology."
+	/>
+</svelte:head>
+
 <main class="mx-auto max-w-2xl px-6 py-4">
 	<h1 class="mb-8 text-4xl font-bold text-gray-900">Articles</h1>
 

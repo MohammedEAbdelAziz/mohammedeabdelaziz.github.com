@@ -6,6 +6,11 @@
 	const { post, title, date, tags } = data;
 </script>
 
+<svelte:head>
+	<title>{title} - Mohammed Essam</title>
+	<meta name="description" content="Read the article &quot;{title}&quot; by Mohammed Essam." />
+</svelte:head>
+
 <header class="mb-8">
 	<h1 class="mb-3 text-3xl font-bold text-gray-900">{title}</h1>
 	<div class="flex items-center justify-between text-sm text-gray-600">

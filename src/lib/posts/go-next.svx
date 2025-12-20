@@ -1,0 +1,30 @@
+---
+title: "Go Next"
+date: "2025-12-21"
+tags: ["NextJS", "GoLang", "Front End"]
+excerpt: "In this series, I will build a project using NextJS for the first time."
+---
+
+## Introduction
+
+I've always loved Svelte, the syntax is clean, the Runes system is superior, and it doesn't force you to learn a dozen concepts just to build a webpage. I am definitely not big on web development and especially front end, but it remains in my philosophy the biggest and best way to express what your product is about, If you build a super duper algorithm that unlocks a huge bottleneck for a client but they will need a UI to interact with it, you can go and carve the rocks with tkinter or something similar or -god help you- try to build a gui in C++ (if you are not already an expert in it) so for the most part, using a web platform as the ui is the easiest way, especially with the rise of tauri or its cousin electron and other webview based runtimes.
+
+While Svelte remains my goto choice regardless of the market trend, I must succumb to the needs of the community and explore the most popular framework: **NextJS**. Maybe then I will understand if it has upsides pushing it to the top other than having Vercel shoving millions of dollars to promote it to everyone in existance only to end up having one of the most dangerous threats to ever exist [CVE-2025-55182](https://nvd.nist.gov/vuln/detail/CVE-2025-55182).
+
+The best way to learn a framework is to build something real. I'm creating a task management app, but I am not into lame projects and if there is ever a lame project contender it's going to be task management. Here's what makes it different: I manage many projects and use GitHub extensively for issues and feature requests. I'm integrating the GitHub API to sync issues as tasks, add custom priorities, and include a task scheduler.
+
+This series documents the journey of building my "not so lame" project management platform, hopefully I will be able to document my decision making and thought process along with my code.
+
+## Choosing the Stack
+
+Obviously I will be choosing NextJS for the frontend (No surprises there), and for the backend I will choose GoLang. Our DB is the good old reliable sqlite which is more than the sufficient for our single-user use case. When it comes to libraries, I will use the built-in net/http library in go and shadcn for components because I don't want to spend 50% of my time tweaking the button layout. The rest will be uncovered throughout the way.
+
+You might ask, why even use golang or any backend language when you can use NextJS' server side features to serve your db, This is for many reasons:
+
+    1. I am diffenately building a mobile app using either Tauri or Capacitor (Haven't decided yet) as soon as I am done with this app.
+    2. I am not building this tool to be OK, I am building it to perfectly integrate into my workflow with extensibility in mind, meaning that some totally unrelated features might need to be added and I don't want any future limitation to be the technology.
+
+
+## DB Arch
+
+Right after developing even a basic understanding of the problem, I like to put it into a draft sql, I do multiple iterations evolving it into the ready sql migration to use in my db. This helps me organize my understanding of the problem and at the same time helps me feel like I already kick started the project.
