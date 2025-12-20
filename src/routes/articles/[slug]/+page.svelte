@@ -1,14 +1,19 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { page } from '$app/state';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 
-	const { post, title, date, tags } = data;
+	const { post, title, date, tags, excerpt } = data;
 </script>
 
 <svelte:head>
 	<title>{title} - Mohammed Essam</title>
 	<meta name="description" content="Read the article &quot;{title}&quot; by Mohammed Essam." />
+	<meta property="og:title" content={title} />
+	<meta property="og:description" content={excerpt} />
+	<meta property="og:url" content={page.url.href} />
+	<meta property="og:type" content="article" />
 </svelte:head>
 
 <header class="mb-8">
