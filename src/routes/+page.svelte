@@ -12,7 +12,7 @@
 <main class="mx-auto max-w-3xl px-6 py-12">
 	<div class="mb-20">
 		<h1 class="mb-6 text-5xl leading-tight font-bold text-black">
-			Product-Focused Engineer. Systems Thinker. Builder.
+			Product-Focused Engineer. Builder.
 		</h1>
 		<p class="mb-6 text-lg leading-relaxed text-gray-700">
 			I bridge the gap between complex backend systems and intuitive user experiences. Currently a

@@ -1,6 +1,6 @@
 ---
 title: "Getting Started with Svelte 5 and Runes"
-date: "2025-12-1"
+date: "2026-12-1"
 tags: ["Svelte", "JavaScript", "Runes"]
 excerpt: "A comprehensive guide to building reactive components with Svelte 5's new runes system."
 ---
