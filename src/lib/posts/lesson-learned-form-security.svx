@@ -1,5 +1,5 @@
 ---
-title: "Lessons Learned: The Silent Danger of Hydration Fallbacks"
+title: "Lesson Learned: The Silent Danger of Hydration Fallbacks"
 date: "2025-12-29"
 author: "Mohammed Essam"
 tags: ["Security", "WebPerf", "Architecture"]
