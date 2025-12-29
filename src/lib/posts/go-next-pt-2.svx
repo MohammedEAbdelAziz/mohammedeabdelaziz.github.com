@@ -1,0 +1,81 @@
+---
+title: "Building with NextJS (When You'd Rather Use Svelte) Part 2"
+date: "2026-12-21"
+tags: ["NextJS", "Go", "Front End"]
+excerpt: "A reluctant dive into NextJS. Following my journey building a real task management app with Go and NextJS, because the best way to judge a framework is to actually build something with it."
+---
+
+## Introduction
+
+In the [previous part](https://mohammedeabdelaziz.github.io/articles/go-next), I discussed my motivations for choosing NextJS despite my preference for Svelte, and outlined the initial database schema for my task management app. In this part, I'll delve deeper into the backend architecture and how I plan to structure the Go server to interact with the NextJS frontend.
+
+## Setting up the Go Backend
+
+To get started with the Go backend, I will set up a simple HTTP server using the built-in `net/http` package. This server will handle API requests from the NextJS frontend and interact with the SQLite database.
+
+First we need to set up our project structure. 
+```properties
+taskmanager/
+├── backend/
+│   ├── main.go
+│   ├── db/
+│   │   ├── db.go 
+│   │   ├── migrations.go
+│   │   └── migrations/
+│   │       ├── 01_init.up.sql
+│   │       └── 01_init.down.sql
+│   ├── handlers/
+│   │   ├── auth.go
+│   │   ├── projects.go
+│   │   └── tasks.go
+│   ├── models/            
+│   │   ├── user.go
+│   │   ├── project.go
+│   │   └── task.go
+│   ├── middleware/  
+│   │   └── auth.go
+│   └── utils/
+│       ├── response.go
+│       └── validation.go
+├── frontend/
+│   └── (NextJS app files)
+└── docker-compose.yml
+```
+
+In the end our `main.go` file will look something like this:
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/http"
+
+	database "taskmanager/backend/db"
+)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello, World!")
+}
+
+func main() {
+	db, err := database.NewDB(database.Config{
+		DBPath:      "./data/taskmanager.db",
+		WALMode:     true,
+		ForeignKeys: true,
+	})
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	if err := database.RunMigrations(db.DB); err != nil {
+		log.Fatalf("Failed to run migrations: %v", err)
+	}
+
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+}
+
+```

@@ -1,0 +1,84 @@
+---
+title: "Surviving the Disconnect: Why I Built TimePerch for Unreliable Internet"
+date: "2026-12-25"
+excerpt: "How we used Eventual Consistency and Idempotency to prevent data loss when the network fails."
+tags: ["System Architecture", "Distributed Systems", "Golang", "SvelteKit"]
+---
+
+In Distributed Systems, optimistic is unrealistic. Networks fail. Devices crash. Data gets lost.
+
+When I started building **TimePerch**, I faced a few edge cases that made me rethink my architecture. What happens if a user starts a work session, then loses internet connectivity? They continue working for hours offline. When they finally reconnect, how do we ensure their time entries are accurate?
+
+In a naive system, that data is lost. The server thinks they are still working. 10 hours later, the dashboard says they worked a 24-hour shift. This creates "Orphaned Sessions", the bane of every monitoring tool.
+
+We had two choices: block the UI until the internet comes back (useless), or embrace chaos. We chose the latter. Here is how we implemented **Eventual Consistency** to survive the disconnect.
+
+## The Architecture of Failure
+
+We moved away from a simple Client-Server model to an **Offline-First** architecture. The Desktop App is the source of truth, not the database.
+
+Here is the exact flow we designed to handle a crash:
+
+1.  **The Action:** User clicks "Stop Work" while offline.
+2.  **Local Persistence:** The event is saved to a local queue on the disk with a generated UUID (e.g., `1234`).
+3.  **The Wait:** The network is dead, so the agent does nothing. The data sits safely on the user's hard drive.
+4.  **The Reconnect:** Connection is restored 1 hour later.
+5.  **The Sync:** The agent pushes the saved event `1234` to the API.
+6.  **The Reconciliation:** The server accepts the "late" timestamp and updates the timeline retroactively.
+
+The system relies on four distinct components working in harmony:
+
+1.  **Desktop Agent (Rust/Tauri):** The "Edge" node. It holds a local SQLite DB. It never trusts the network.
+2.  **Backend API (Golang):** The ingestion engine. It accepts high-volume writes.
+3.  **Reporting API:** The "Cleaner." It reconciles messy data into clean reports.
+4.  **Web Dashboard:** The view layer that the manager sees.
+
+## The 4 Pillars of Our Solution
+
+### 1. The Database in Your Pocket (Client-Side Durability)
+Most apps try to send data immediately (`POST /time-entry`). If it fails, they show an error.
+We don't do that. When you click "Stop," we save it to a local queue on your disk first. We assign it a **Client-Generated UUID** immediately.
+
+Only *then* do we try to send it. If the internet is dead, the agent just waits. It will retry in 5 minutes, or 5 hours. The data is safe on your hard drive.
+
+### 2. Idempotency (The Magic UUID)
+What happens if the network is "flaky"? The client sends a request, the server receives it, writes it to the DB, but the *acknowledgment* (200 OK) gets lost on the way back?
+The client thinks it failed, so it sends it again.
+
+Without protection, you now have duplicate time entries.
+We solved this with **Idempotency Keys**.
+
+```sql
+CREATE TABLE time_entries (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL,
+    -- The Secret Sauce:
+    client_event_id UUID NOT NULL UNIQUE, 
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    status VARCHAR(50)
+);
+```
+
+Because the client_event_id is unique, the database rejects the second write. We catch that error in Go and return a "Success" to the client anyway. The system heals itself.
+
+### 3. Two-Phase Synthetic Entry
+
+This was the hardest part. What if a user crashes their computer while working? They never clicked "Stop." The Backend API waits for a heartbeat. If we don't hear from an agent for 15 minutes, we create a "Synthetic Stop" entry.
+
+**Phase 1 (Provisional):** We mark the session as "Ended (System Auto-Close)."
+
+**Phase 2 (Reconciliation):** If the user comes back online the next day and uploads their logs, we see the real "Stop" event. The system automatically finds the Synthetic entry and supersedes it with the real data.
+
+### 4. The Reporting API (The Truth Layer)
+
+Our Web Dashboard never reads raw logs. It reads from a "Reconciled View." The Reporting API runs a background job that looks for conflicts (e.g., overlapping sessions, superseded synthetic events) and flattens them into a clean timeline.
+
+This means a manager might see a "Pending" flag for a few minutes, but they never see incorrect math.
+
+## Why This Matters
+
+As a student studying System Architecture, it's easy to assume the "Happy Path." But in production, the "Unhappy Path" is where you live.
+
+We built TimePerch not just to track time, but to guarantee that data integrity survives infrastructure failure.
+
+If you want to learn more about TimePerch you can visit our [website](https://timeperch.app).

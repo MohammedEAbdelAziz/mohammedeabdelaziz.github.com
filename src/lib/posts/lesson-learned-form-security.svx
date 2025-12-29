@@ -1,0 +1,65 @@
+---
+title: "Lessons Learned: The Silent Danger of Hydration Fallbacks"
+date: "2025-12-29"
+author: "Mohammed Essam"
+tags: ["Security", "WebPerf", "Architecture"]
+excerpt: "How a missing HTML attribute can leak plain-text credentials during network throttling, and why Progressive Enhancement still matters in 2025."
+---
+
+## What Happened?
+
+While exploring a major production platform recently (400M USD in annual revenue), I stumbled upon an edge case that reminded me why **Progressive Enhancement** isn't just a "nice-to-have"—it's a security requirement.
+
+I noticed my credentials appearing in the browser's URL bar during a login attempt. As a developer, I was immediately concerned.
+
+## The Discovery
+During a standard login flow on a Next.js-powered site, my browser sent a `GET` request containing my email and password as plain-text query parameters:
+
+`https://target-app.com/login?email=myemail@example.com&password=myactualpassword`
+
+### The Context
+I was using Brave browser on a throttled connection. Because the network was slow, the JavaScript bundles responsible for "hydrating" the page hadn't finished loading when I hit the "Log in" button.
+
+## The Root Cause: Hydration Mismatch
+In modern SSR (Server-Side Rendering) frameworks like Next.js or SvelteKit, the server sends a static HTML version of the page first, which is then "hydrated" by JavaScript to become interactive.
+
+If a user interacts with a form **before** hydration is complete, the browser falls back to default HTML behavior. In this specific case:
+
+1. The `<form>` tag in the raw HTML was missing the `method="POST"` attribute.
+2. By default, browsers treat any form without a method as a `GET` request.
+3. The browser took every `input` field and appended it to the URL.
+
+
+
+## Why This Matters (Even as a P5)
+Security triagers often classify this as a **P5 (Informational)** finding because it technically occurs on the "client-side". However, for a developer, the impact is real:
+* **Log Leakage:** Credentials end up in server access logs (Nginx/Apache).
+* **Browser History:** Passwords remain in the user's local history.
+* **Referer Headers:** If the user clicks a link from that URL, the credentials could be sent to a third party.
+
+## The Fix: One Attribute to Rule Them All
+The fix is deceptively simple. Regardless of how much "magic" your framework (Next.js, SvelteKit, etc.) does with `onSubmit` handlers or Server Actions, your raw HTML must be secure.
+
+**The "Insecure" Way:**
+```html
+<form class="styling-classes" onSubmit={handleSubmit}>
+  <input name="password" type="password" />
+  <button type="submit">Login</button>
+</form>
+```
+
+**The Secure Way:**
+
+```html
+<form method="POST" class="styling-classes" onSubmit={handleSubmit}>
+    <input name="password" type="password" />
+    <button type="submit">Login</button>
+</form>
+```
+By adding method="POST", you ensure that even if hydration fails, the browser will still perform a secure POST request rather than defaulting to GET.
+
+## Final Thoughts
+
+This experience was a great reminder that as we move toward more complex system architectures and frameworks, we cannot ignore the fundamentals of the web.
+
+Whether you're using SvelteKit (my personal favorite) or Next.js, always ensure your forms have a secure fallback. Don't let your users' security depend on how fast their JavaScript bundles load.

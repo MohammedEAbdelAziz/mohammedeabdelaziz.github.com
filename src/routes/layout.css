@@ -84,6 +84,7 @@ pre.shiki {
 	margin: 1.5em 0;
 	max-width: calc(100vw - 2rem);
 	box-sizing: border-box;
+	line-height: 1.25;
 }
 
 pre.shiki code {
@@ -94,7 +95,6 @@ pre.shiki code {
 	font-weight: 400;
 	white-space: pre;
 	word-wrap: normal;
-	line-height: 1.5;
 }
 
 /* Fallback for non-shiki pre */
@@ -146,4 +146,60 @@ pre:not(.shiki) code {
 code::before,
 code::after {
 	content: '';
+}
+
+/* Shiki Code Block Enhancements */
+
+pre.shiki {
+	position: relative;
+}
+
+/* Line-level styling - minimal, clean approach */
+.shiki .line {
+	margin: 0;
+	padding: 0;
+	line-height: 0.5;
+	transition: background-color 0.15s ease;
+}
+
+/* Shiki Transformer Styles - Clean & Subtle */
+
+/* DIFF: Added lines - subtle green tint */
+.shiki .diff.add {
+	background-color: rgba(88, 166, 255, 0.1);
+}
+
+/* DIFF: Removed lines - subtle red tint */
+.shiki .diff.remove {
+	opacity: 0.6;
+}
+
+/* HIGHLIGHT: Subtle yellow background for highlighted lines */
+.shiki .highlighted {
+	background-color: rgba(184, 112, 16, 0.15);
+}
+
+/* FOCUS: Dim non-focused code with blur */
+.shiki.blur .line {
+	opacity: 0.4;
+}
+
+.shiki.blur .line.focus {
+	opacity: 1;
+	background-color: rgba(88, 166, 255, 0.08);
+}
+
+/* ERROR: Red tint for error lines */
+.shiki .error {
+	background-color: rgba(248, 81, 73, 0.12);
+}
+
+/* WARNING: Orange tint for warning lines */
+.shiki .warning {
+	background-color: rgba(187, 128, 9, 0.15);
+}
+
+/* INFO: Blue tint for info lines */
+.shiki .info {
+	background-color: rgba(88, 166, 255, 0.1);
 }
