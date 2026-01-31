@@ -1,81 +1,103 @@
 ---
-title: "Building with NextJS (When You'd Rather Use Svelte) Part 2"
-date: "2026-12-21"
-tags: ["NextJS", "Go", "Front End"]
-excerpt: "A reluctant dive into NextJS. Following my journey building a real task management app with Go and NextJS, because the best way to judge a framework is to actually build something with it."
+title: "Go 1.22, SQLite, and Next.js: The "Boring" Backend"
+date: "2026-02-06"
+tags: ["NextJS", "Go", "SQLite", "Backend"]
+excerpt: "Setting up the plumbing. Why plain Go is better than any framework, battling CORS, and connecting a NextJS frontend that feels suspiciously heavy for a task manager."
 ---
 
-## Introduction
+## The "Boring" Parts are the Best Parts
 
-In the [previous part](https://mohammedeabdelaziz.github.io/articles/go-next), I discussed my motivations for choosing NextJS despite my preference for Svelte, and outlined the initial database schema for my task management app. In this part, I'll delve deeper into the backend architecture and how I plan to structure the Go server to interact with the NextJS frontend.
+In <a href="/articles/go-next" data-sveltekit-reload>Part 1</a>, I ranted about choosing NextJS despite my love for Svelte. Now that I've actually started writing code, I'm reminded why I chose Go for the backend. It's boring. And in software engineering, boring is the highest compliment you can give.
 
-## Setting up the Go Backend
+While the frontend ecosystem reinvents itself every 6 weeks (are we doing Server Actions this week? Or is `use client` deprecated now?), my Go backend code looks typically identical to Go code written 5 years ago. It’s stable, typed, and fast.
 
-To get started with the Go backend, I will set up a simple HTTP server using the built-in `net/http` package. This server will handle API requests from the NextJS frontend and interact with the SQLite database.
+### The Backend Structure
 
-First we need to set up our project structure. 
-```properties
-taskmanager/
-├── backend/
-│   ├── main.go
-│   ├── db/
-│   │   ├── db.go 
-│   │   ├── migrations.go
-│   │   └── migrations/
-│   │       ├── 01_init.up.sql
-│   │       └── 01_init.down.sql
-│   ├── handlers/
-│   │   ├── auth.go
-│   │   ├── projects.go
-│   │   └── tasks.go
-│   ├── models/            
-│   │   ├── user.go
-│   │   ├── project.go
-│   │   └── task.go
-│   ├── middleware/  
-│   │   └── auth.go
-│   └── utils/
-│       ├── response.go
-│       └── validation.go
-├── frontend/
-│   └── (NextJS app files)
-└── docker-compose.yml
-```
+I stuck to my promise: no heavy frameworks. Just the standard library `net/http`. With Go 1.22+, the standard `ServeMux` is surprisingly capable, handling methods and path parameters without needing `chi` or `gorilla/mux`.
 
-In the end our `main.go` file will look something like this:
+Here is the entry point in `main.go`. It's beautifully simple:
 
 ```go
-package main
-
-import (
-	"fmt"
-	"log"
-	"net/http"
-
-	database "taskmanager/backend/db"
-)
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
-}
-
 func main() {
-	db, err := database.NewDB(database.Config{
-		DBPath:      "./data/taskmanager.db",
-		WALMode:     true,
-		ForeignKeys: true,
-	})
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
-	defer db.Close()
+    // 1. Initialize SQLite with WAL mode (Write-Ahead Logging) for easier concurrency
+    db, err := database.NewDB(database.Config{
+        DBPath:      "./data/taskmanager.db",
+        WALMode:     true,
+        ForeignKeys: true, // Don't forget this! SQLite defaults to FKs off.
+    })
+    
+    // 2. Run migrations on startup. 
+    // "Move fast and break things" is for startups. 
+    // "Migrate safely and keep data integrity" is for engineers who like sleeping.
+    if err := database.RunMigrations(db.DB); err != nil {
+        log.Fatalf("Failed to run migrations: %v", err)
+    }
 
-	if err := database.RunMigrations(db.DB); err != nil {
-		log.Fatalf("Failed to run migrations: %v", err)
-	}
+    mux := http.NewServeMux()
 
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
+    // 3. Registering handlers - organized by domain
+    handlers.RegisterTaskHandlers(mux, db)
+    handlers.RegisterProjectHandlers(mux, db)
+    handlers.RegisterAuthHandlers(mux, db)
+
+    // ... middleware and server start
 }
-
 ```
+
+Notice the explicit `ForeignKeys: true`. A common rookie mistake with SQLite is assuming constraints are enforced by default. They aren't. Always check your docs.
+
+## The Arch-Nemesis: CORS
+
+You haven't really done full-stack development until you've hit the CORS wall.
+
+Since I'm running NextJS on `localhost:3000` and Go on `localhost:8080`, the browser (rightfully) throws a fit. You could use NextJS rewrites to proxy requests, but I prefer solving it at the source so my API is consumable by other clients (like that mobile app I plan to build).
+
+I wrote a simple middleware to handle the preflight checks. It’s verbose, but it’s explicit.
+
+```go
+func CORSMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Access-Control-Allow-Origin", "*") // For dev. Please don't do this in prod.
+        w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+        w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Authorization")
+
+        if r.Method == "OPTIONS" {
+            w.WriteHeader(http.StatusOK)
+            return
+        }
+
+        next.ServeHTTP(w, r)
+    })
+}
+```
+
+## Connecting the Frontend
+
+On the NextJS side, I set up a basic generic fetch client. I resist the urge to install `axios` or `tanstack-query` immediately. `fetch` is fine for now.
+
+```typescript
+// src/lib/api/client.ts
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+export async function fetchClient(endpoint: string, options: RequestInit = {}) {
+  const token = localStorage.getItem('token');
+  // ... basic header injection
+}
+```
+
+Simple. Readable. Changes rarely.
+
+## Developer Experience Check-in
+
+Verified:
+- **Go**: Fast compilation. Clear errors. No magic.
+- **SQLite**: Using a file-based DB meant zero Docker setup for the database layer. I just ran the app and the `.db` file appeared. Love it.
+- **Next.js**: It's heavy. The initial load time for the dev server is noticeably slower than a Vite+Svelte/React app. But the routing is working, and Shadcn components (which I'm using for the UI) are saving me time on CSS, which is a trade-off I'll accept.
+
+## Next Steps
+
+Now that the plumbing is done (Auth, Database, API connection), the real work begins. We need to actually manage tasks.
+
+In Part 3, I'll tackle the GitHub integration. I want to sync issues from my repos directly into this task manager. That involves webhooks, API polling, and probably realizing I forgot a field in my database schema.
+
+Stay tuned.

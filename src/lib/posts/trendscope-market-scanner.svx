@@ -1,0 +1,94 @@
+---
+title: "Running FinancialBERT on a Budget: How I Built a Real-Time Market Scanner for $5/mo"
+date: "2026-02-03"
+tags: ["AI Engineering", "Python", "ONNX", "SvelteKit", "Optimization"]
+excerpt: "How to fit a transformer model into a low-memory VPS using Dynamic Quantization and ONNX Runtime."
+---
+
+I needed a break.
+
+After spending months deep in the trenches of distributed systems and local-first synchronization engines for [TimePerch](https://timeperch.app), I wanted a weekend project. Something different. Something that didn't involve race conditions or eventual consistency.
+
+I’ve always been skeptical of the "AI Hype." Not the technology itself—Transformers are incredible—but the *engineering* around it. It feels bloated. Everyone is renting massive GPU clusters just to classify text. As a Systems Engineer, that inefficiency bothers me.
+
+I set a challenge for myself: **Build a real-time financial sentiment analyzer that creates a live "Fear & Greed" index for global markets, but run it entirely on a cheap, CPU-only VPS.**
+
+The result is **TrendScope**. Here is how I engineered it to handle thousands of headlines without melting the server.
+
+## The Problem: Signal vs. Noise
+
+If you try to follow global markets, you drown in noise. "Top 10 Stocks to Buy," "Podcast Episode 44," "Why Crypto is Dead (Again)."
+
+I wanted a signal. A raw, unopinionated metric of whether the news cycle was optimistic or pessimistic about a specific region (e.g., "Eurozone" or "Saudi Arabia").
+
+## The Architecture: Systems Thinking Applied to ML
+
+Most tutorials tell you to spin up a Python container, load PyTorch, download `bert-base-uncased`, and expose an API.
+
+If you do that on a standard 1GB RAM droplet, your server crashes immediately. PyTorch is heavy. BERT is heavy.
+
+To make this viable, I had to treat the AI model not as "magic," but as a software dependency that needed optimization.
+
+![](https://mermaid.ink/img/pako:eNqFVNty2jAQ_RWN-kJmHAZfwUwnMwFKm5aQBjJtpzgPMl4bDbZMZTkNAf69K0wS59boQZfV2bPHuytv6DyPgHZpItlqQa4GgSA4ijKsDAG9WgCZzhcQlSlI0vgCTKoQmDoKaIXVo4eGWR8Qsd7vr8nx8cn2040-m262JROIeDFr7BfSk_kS5NF15Q8iCsSrYX_mcnmIebMmIx4rLpIncSs-jHXA3muoTtePwM95nqQwqxYyhr8FmUynlcwhqPlie_B5dDlE1wizSYY8VXga57yALemnwMRsP5MruFW1SJVRe1lNclkyofgdRORMxCBBzNH5Yjz-NQuoXsikxPsMyMdQnpDGmVAdco4FSfEra5x7qKa0m2SqcqkrgvOWDHqzxvRyxBXg9v2Enn4_I40hKxQZMQFPMtlPOQg1m94Afuc3rg6GKkMT-FMCeg2YYlvNMtMkuNY0au4Ky6LjC5GutboHQdTADuMR7SpZgkEzkBnTR7rRkICqBWQQ0C5uQ1bgzqjZfzDJWZhCoQGbijOgEZNLnSttjFlagHF_E7L5MpF5iXnYM34Y-sPTYe9AqhFxLtSQZTxdV4ivoHqScVFg9kVukAznYsXm8MxnirWsPExndVu7XEmeMbnu52kuD0Hj_XiJ0f1Sx5mm2bHaL3G9XEYg_4tMuYA6wG47pmvWAAXMcxE9F2bHTuzVUNjYir-nHuslesvkrWuBlagUvyV2npYFRnrgkEnIGnbbIL5vEMt2DdJqttyjVzzqtJbr2Z_qpYwgZmWqRlws6_qd0EVkDQdRAiMWQtp7qzs0cheIHfbqionfeZ7dtyuikwXtVl1Gy1XEFAw4w6f1CMEm19XC90y7Vsvfc9Duht7Sru1ZTcfxPbdjWb7voy6DrtHcabYsz7Ys17Ed0zZNb2fQu33YVrPT8luO7Tlux-20Pccz8AM4Pv3z6neNZY15Qnf_AOP3vbg?type=png)
+
+### 1. The Model: Distillation & Quantization
+
+I started with **FinancialBERT**, a model pre-trained specifically on financial text. It’s great, but huge.
+
+To fit it into my constraints, I used a two-step optimization process:
+
+1.  **Distillation:** I didn't need the full creative capabilities of a generative model. I just needed classification (Bullish, Bearish, Neutral).
+2.  **Quantization:** This was the game changer. Standard models use 32-bit floating-point numbers (FP32) for their weights. By converting these to 8-bit integers (Int8), you reduce the model size by ~4x with virtually no loss in accuracy for this specific task.
+
+I ditched PyTorch for inference and moved to **ONNX Runtime**. It’s a cross-platform inference engine that is significantly faster and lighter on CPUs.
+
+The result? Inference times dropped to **~2ms on a standard CPU**, and the memory footprint shrank by nearly 1GB.
+
+### 2. The Engine: Celery & Redis
+
+Real-time doesn't mean "every millisecond." It means "fresh enough to matter."
+
+I built the backend using **FastAPI** for the interface and **Celery** for the heavy lifting. I didn't want the scraping logic to block the API.
+
+The system runs on a strict heartbeat:
+1.  **Every 15 minutes**, a Celery beat triggers the `scan_markets` task.
+2.  It pulls RSS feeds from Google News for 7 distinct regions.
+3.  It filters out the "fluff" (podcasts, opinion pieces) using a lightweight heuristic filter.
+4.  The remaining headlines are passed to the ONNX model.
+
+```python
+# The actual logic for scoring optimism
+def calculate_optimism(bullish_count, bearish_count):
+    total_signals = bullish_count + bearish_count
+    if total_signals == 0:
+        return 50.0 # Neutral baseline
+    
+    # Simple ratio: Bullish / Total
+    return (bullish_count / total_signals) * 100
+```
+
+This decoupled architecture means my API is always responsive (sub-50ms), even while the worker is crunching through hundreds of headlines in the background.
+
+## The Frontend: SvelteKit Command Center
+
+I am a Svelte loyalist. For the dashboard, I wanted an interface that prioritizes **Situational Awareness**—giving you the global economic posture in a single glance.
+
+The UI is built with **SvelteKit**, utilizing **Tailwind CSS v4** for a clean, consistent foundation, while custom-engineering specific data visualization components where standard libraries fell short.
+
+-   **Regional Telemetry:** The sidebar acts as a rapid switcher, showing live "Optimism Scores" for key regions (US, EU, Africa, Middle East).
+-   **Visualizing Momentum:** Instead of just a current score, I implemented a 24-hour trend histogram. This differentiation is critical—a "Neutral" score means something very different if the trend is crashing down versus recovering up.
+-   **Automated Insights:** The right-hand panel synthesizes the raw data into narrative bullet points (e.g., "Positive Momentum," "Top Topic"), bridging the gap between raw data and actionable intelligence.
+
+It’s a "Dark Mode by Default" mission control screen, designed to look good on a second monitor while you work.
+
+## Why This Matters
+
+We are entering an era where efficient AI is more valuable than massive AI.
+
+At [Akamaar](https://akamaar.dev), we often see clients paying thousands of dollars a month for GPU instances they barely use. By applying standard systems engineering principles—caching, queuing, and quantization—you can often achieve 90% of the performance for 1% of the cost.
+
+TrendScope is a proof-of-concept for that philosophy. It digests the global economy every 15 minutes, and it costs less to run than a cup of coffee.
+
+---
+
+*If you are looking to build high-performance, resource-efficient software, let's talk. I handle the systems engineering at [Akamaar](https://akamaar.dev).*

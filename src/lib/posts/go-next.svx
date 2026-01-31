@@ -112,3 +112,7 @@ CREATE INDEX idx_tasks_due_date ON tasks(due_date);
 ## Conclusion
 
 This is just the start of the journey, I will be documenting my progress as I go along building this project. Let me know if you have any suggestions or if you want to see specific parts of the code or architecture in more detail.
+
+----
+
+**Continue reading:** <a href="/articles/go-next-pt-2" data-sveltekit-reload>Building with NextJS Pt.2 (The "Boring" Backend)</a>

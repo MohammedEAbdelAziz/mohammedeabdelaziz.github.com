@@ -13,7 +13,7 @@ import {
 
 const highlighter = await createHighlighter({
 	themes: ['material-theme-palenight'],
-	langs: ['javascript', 'typescript', 'svelte', 'html', 'css', 'json', 'bash', 'shell', 'sql', 'go', 'mdx', 'yaml', 'ini', 'properties', 'dockerfile', 'docker', ]
+	langs: ['javascript', 'typescript', 'svelte', 'html', 'css', 'json', 'bash', 'shell', 'sql', 'go', 'mdx', 'yaml', 'ini', 'properties', 'dockerfile', 'docker', 'python', 'mermaid']
 });
 
 /** @type {import('mdsvex').MdsvexOptions} */

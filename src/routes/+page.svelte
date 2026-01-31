@@ -2,162 +2,239 @@
 </script>
 
 <svelte:head>
-	<title>Mohammed Essam - Full-Stack Software Engineer</title>
+	<title>Mohammed Essam - Systems Architect & Product Engineer</title>
 	<meta
 		name="description"
-		content="Full-stack software engineer building scalable, production-grade applications with Svelte, TypeScript, Python, and Golang. Available for collaborations and opportunities."
+		content="Systems Architect specializing in Local-First Architecture (Rust/Tauri) and High-Concurrency Backends (Go). Building high-performance software that respects hardware constraints."
 	/>
 </svelte:head>
 
-<main class="mx-auto max-w-3xl px-6 py-12">
-	<div class="mb-20">
-		<h1 class="mb-6 text-5xl leading-tight font-bold text-black">
-			Product-Focused Engineer. Builder.
-		</h1>
-		<p class="mb-6 text-lg leading-relaxed text-gray-700">
-			I bridge the gap between complex backend systems and intuitive user experiences. Currently a
-			senior Computer Science student with the output of a Senior Engineer—architecting and shipping
-			commercial-grade software like <strong>TimePerch</strong> and <strong>Infrawatcher</strong>.
-		</p>
-		<p class="mb-6 text-lg leading-relaxed text-gray-700">
-			My engineering philosophy is simple: <strong
-				>Ship production code, not just assignments.</strong
-			> I specialize in high-performance backends (Go, Python) and local-first desktop architectures (Tauri,
-			Rust) that solve actual business problems.
-		</p>
-		<p class="mb-6 text-lg leading-relaxed text-gray-700">
-			If you think my background in Go and Python could be a good fit for your team, I'd love to
-			chat. You can also <a
-				href="/Mohammed Essam.pdf"
-				download
-				class="text-blue-600 hover:text-blue-700">Download my CV</a
-			>.
-		</p>
-		<p class="text-lg leading-relaxed text-gray-700">
-			For independent projects, I work through
-			<a href="https://akamaar.dev" target="_blank" class="text-blue-600 hover:text-blue-700"
-				>akamaar</a
-			>, where we help founders build and ship their first MVPs. Visit
-			<a href="https://akamaar.dev" target="_blank" class="text-blue-600 hover:text-blue-700"
-				>akamaar.dev ↗</a
-			>.
-		</p>
-	</div>
-
-	<section class="mb-20">
-		<h2 class="mb-8 text-2xl font-bold text-black">Personal Work & Projects</h2>
-		<ul class="space-y-4 text-gray-700">
-			<li>
-				<a
-					href="https://timeperch.app"
-					target="_blank"
-					class="font-medium text-blue-600 hover:text-blue-700">TimePerch</a
-				>
-				— Cross-platform productivity suite architected with <strong>Tauri (Rust)</strong> and
-				<strong>Svelte 5</strong>. Features a local-first sync engine and a concurrent
-				<strong>Golang</strong> backend handling rate-limiting and data consistency.
-			</li>
-			<li>
-				<a
-					href="https://infrawatcher.akamaar.dev"
-					target="_blank"
-					class="font-medium text-blue-600 hover:text-blue-700">Infrawatcher (WIP)</a
-				>
-				— Automated infrastructure monitoring and alerting platform built with
-				<strong>FastAPI</strong> and <strong>SvelteKit</strong>. Implements customizable alerting
-				rules and real-time dashboards to ensure system reliability.
-			</li>
-			<li>
-				<a
-					href="https://akamaar.dev/case-studies"
-					target="_blank"
-					class="font-medium text-blue-600 hover:text-blue-700">Smart Engineer Dispatch System</a
-				>
-				— Intelligent dispatch algorithm that improved operational efficiency. Built with
-				<strong>Python</strong>
-				and <strong>Svelte</strong>, reducing operational overhead by automating engineer-to-job
-				matching.
-			</li>
-
-			<li>
-				<a
-					href="https://akamaar.dev/case-studies"
-					target="_blank"
-					class="font-medium text-blue-600 hover:text-blue-700">Holiday Calendar System</a
-				>
-				— Multi-tenant scheduling platform enabling companies to manage holiday calendars across diverse
-				client workforces with isolated access. Built with <strong>Svelte 5</strong> frontend (<a
-					href="https://github.com/MohammedEAbdelAziz/demo-calendar"
-					target="_blank"
-					class="text-blue-600 hover:text-blue-700">repo</a
-				>) and <strong>FastAPI</strong> backend (<a
-					href="https://github.com/MohammedEAbdelAziz/demo-calendar-api"
-					target="_blank"
-					class="text-blue-600 hover:text-blue-700">repo</a
-				>) implementing role-based access controls and real-time synchronization.
-			</li>
-		</ul>
-	</section>
-
-	<section class="mb-20">
-		<h2 class="mb-8 text-2xl font-bold text-black">Other Contributions</h2>
-		<ul class="space-y-4 text-gray-700">
-			<li>
-				<a
-					href="https://github.com/Chatit-cloud/BEE2BEE"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="font-medium text-blue-600 hover:text-blue-700">BEE2BEE</a
-				> — A peer-to-peer network that allows you to easily deploy, route, and access AI models across
-				any infrastructure (Local, Cloud, Colab) without complex networking configuration.
-			</li>
-		</ul>
-	</section>
-
-	<section class="mb-20">
-		<h2 class="mb-8 text-2xl font-bold text-black">What I Work With</h2>
-		<div class="space-y-6">
-			<div>
-				<h3 class="mb-2 font-semibold text-black">Languages</h3>
-				<p class="text-gray-700">Python • Golang • TypeScript • Rust • SQL • C</p>
+<main class="split-container">
+	<!-- Left Column: Fixed Bio, Contact, Stack -->
+	<aside class="bio-column">
+		<div class="bio-content">
+			<!-- Status Indicator -->
+			<div class="status-indicator">
+				<span class="status-dot"></span>
+				<span class="status-text">Building privacy-tech @ TimePerch</span>
 			</div>
-			<div>
-				<h3 class="mb-2 font-semibold text-black">Frameworks & Infrastructure</h3>
-				<p class="text-gray-700">
-					FastAPI • SvelteKit • Tauri • Docker • PostgreSQL • Coolify • Linux
+
+			<!-- Hero Section -->
+			<div class="hero-section">
+				<h1 class="hero-title">Systems Architect & Product Engineer.</h1>
+				<p class="hero-subtitle">
+					I build high-performance software that respects hardware constraints. Specializing in <strong
+						>Local-First Architecture (Rust/Tauri)</strong
+					>
+					and <strong>High-Concurrency Backends (Go)</strong>.
 				</p>
+				<p class="hero-bio">
+					I believe modern software has become unnecessarily bloated. My work focuses on returning
+					to efficiency—building systems that run faster, use less memory, and work offline by
+					default.
+				</p>
+				<p class="hero-bio">
+					I am the Lead Engineer at <a href="https://akamaar.dev" target="_blank">Akamaar</a>, where
+					I help founders ship commercial-grade MVPs. Currently, I am architecting
+					<a href="https://timeperch.app" target="_blank">TimePerch</a>, a privacy-first alternative
+					to invasive employee monitoring.
+				</p>
+				<div class="hero-cta">
+					<a href="/articles">Read My Engineering Notes</a>
+					<span class="cta-separator">•</span>
+					<a href="https://github.com/MohammedEAbdelAziz" target="_blank">View Source Code</a>
+					<span class="cta-separator">•</span>
+					<a href="/Mohammed Essam.pdf" download>Download CV</a>
+				</div>
 			</div>
-			<div>
-				<h3 class="mb-2 font-semibold text-black">Engineering Focus</h3>
-				<p class="text-gray-700">
-					Distributed Systems • Concurrency Patterns • Local-First Architecture • API Design •
-					System Scaling
+
+			<!-- Stack Grid -->
+			<div class="stack-section">
+				<h3 class="stack-title">The Arsenal</h3>
+				<table class="stack-table">
+					<tbody>
+						<tr>
+							<td class="stack-domain">Systems</td>
+							<td class="stack-tech">Rust, Golang, C, Linux Kernel (Basics)</td>
+						</tr>
+						<tr>
+							<td class="stack-domain">Application</td>
+							<td class="stack-tech">Svelte 5, Tauri (v2), TypeScript, Python</td>
+						</tr>
+						<tr>
+							<td class="stack-domain">Infrastructure</td>
+							<td class="stack-tech">Docker, PostgreSQL, ONNX Runtime, Nginx</td>
+						</tr>
+						<tr>
+							<td class="stack-domain">Philosophy</td>
+							<td class="stack-tech">Local-First, Zero-Trust, Offline-Capable</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- Contact Section -->
+			<div class="contact-section">
+				<p class="contact-text">
+					I am always open to discussing <strong>Systems Architecture</strong>,
+					<strong>Rust</strong>, or <strong>Privacy Tech</strong>.
+				</p>
+				<p class="contact-text">
+					If you are a founder looking for a technical partner, visit <a
+						href="https://akamaar.dev"
+						target="_blank">Akamaar.dev</a
+					>.
+				</p>
+				<p class="contact-text">
+					For technical discourse, <a href="mailto:mo@akamaar.dev">Email Me</a>.
 				</p>
 			</div>
 		</div>
-	</section>
+	</aside>
 
-	<section>
-		<h2 class="mb-6 text-lg font-bold text-black">Let's Chat</h2>
-		<p class="mb-6 text-gray-700">
-			If you want to get in touch, <a
-				href="mailto:mo@akamaar.dev"
-				class="text-blue-600 hover:text-blue-700">Email me</a
-			>
-			or send a direct message on
-			<a
-				href="https://www.linkedin.com/in/mohammed-essam-abdelaziz/"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="text-blue-600 hover:text-blue-700">LinkedIn</a
-			>.<br />
-			If you need a project built, request a quote at
-			<a
-				href="https://akamaar.dev"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="text-blue-600 hover:text-blue-700">akamaar.dev</a
-			>.
-		</p>
-	</section>
+	<!-- Right Column: Scrollable Work & Writing -->
+	<div class="work-column">
+		<!-- Selected Work Section -->
+		<section class="work-section">
+			<h2 class="section-title">Selected Work</h2>
+
+			<article class="project-entry">
+				<div class="project-header">
+					<span class="project-number">01</span>
+					<h3 class="project-title">
+						<a href="https://timeperch.app" target="_blank">TimePerch</a>
+					</h3>
+					<span class="project-dots"></span>
+					<span class="project-stack">[Rust, Tauri, Python]</span>
+				</div>
+				<p class="project-description">
+					Privacy-focused employee activity tracking and compliance assurance platform.
+				</p>
+				<div class="project-details">
+					<p>
+						<strong>The Challenge:</strong> Building a privacy-first employee monitoring system that ensures
+						compliance while respecting data sovereignty—all activity data remains local, yet the server
+						stays informed for reporting and analytics.
+					</p>
+					<p>
+						<strong>The Engineering:</strong> Architected a Hybrid Store-and-Forward synchronization engine
+						using Rust and SQLite.
+					</p>
+					<ul
+						style="margin-left: 2.5rem; list-style-type: disc; font-size: 0.875rem; line-height: 1.6; color: var(--color-text-secondary);"
+					>
+						<li style="margin-bottom: 0.5rem;">
+							<strong>Optimized Network Strategy:</strong> Implemented a split-protocol where high-volume
+							telemetry is micro-batched to reduce overhead, while critical state transitions (e.g., "Shift
+							Start") trigger immediate, event-driven propagation.
+						</li>
+						<li style="margin-bottom: 0.5rem;">
+							<strong>Fault Tolerance:</strong> Designed a local persistence queue that buffers data during
+							outages. The system utilizes an exponential backoff algorithm to retry failed syncs, ensuring
+							eventual consistency without overwhelming the server upon reconnection.
+						</li>
+						<li style="margin-bottom: 0.5rem;">
+							<strong>Data Integrity:</strong> Enforced idempotency via client-generated UUIDs to prevent
+							duplicate entries during retry storms.
+						</li>
+					</ul>
+					<p><strong>Stack:</strong> Rust, Tauri, Svelte 5, Python, Golang.</p>
+				</div>
+			</article>
+
+			<article class="project-entry">
+				<div class="project-header">
+					<span class="project-number">02</span>
+					<h3 class="project-title">
+						<a href="https://trendscope.akamaar.dev" target="_blank">TrendScope</a>
+					</h3>
+					<span class="project-dots"></span>
+					<span class="project-stack">[AI Engineering]</span>
+				</div>
+				<p class="project-description">
+					Near real-time financial headlines sentiment analysis for market intelligence.
+				</p>
+				<div class="project-details">
+					<p>
+						<strong>The Challenge:</strong> Analyzing sentiment from thousands of financial news headlines
+						in near real-time using heavy NLP models on low-cost CPU infrastructure without latency spikes.
+					</p>
+					<p>
+						<strong>The Engineering:</strong> Optimized a DistilRoBERTa transformer model using
+						<strong>ONNX Runtime</strong>
+						and <strong>Dynamic Quantization</strong>. Achieved 2ms inference speeds on standard
+						CPUs, reducing server costs to near-zero while maintaining 94% sentiment accuracy.
+						Implemented Celery for distributed task processing with 15-minute intervals to handle
+						high-volume news feeds while managing CPU load efficiently.
+					</p>
+					<p><strong>Stack:</strong> Python, ONNX Runtime, Celery.</p>
+				</div>
+			</article>
+
+			<article class="project-entry">
+				<div class="project-header">
+					<span class="project-number">03</span>
+					<h3 class="project-title">
+						<a href="https://infrawatcher.akamaar.dev" target="_blank">InfraWatcher</a>
+					</h3>
+					<span class="project-dots"></span>
+					<span class="project-stack">[Automation, LLMs]</span>
+				</div>
+				<p class="project-description">
+					Proactive outage detection and automated client communication for agencies.
+				</p>
+				<div class="project-details">
+					<p>
+						<strong>The Challenge:</strong> Detecting infrastructure outages from major service providers
+						(Cloudflare, AWS, GCP) the moment they occur, then automatically notifying affected clients
+						based on their dependency stack.
+					</p>
+					<p>
+						<strong>The Engineering:</strong> Built a real-time web scraper that monitors status pages
+						of major cloud providers. Implemented a PostgreSQL-backed dependency mapping system using
+						foreign keys to track which clients rely on which services. When an outage is detected, the
+						system leverages LLMs to draft contextual notification and apology emails tailored to each
+						affected client's specific service dependencies.
+					</p>
+					<p><strong>Stack:</strong> Python, SvelteKit, PostgreSQL, LLMs.</p>
+				</div>
+			</article>
+		</section>
+
+		<!-- The Lab Section -->
+		<section class="work-section">
+			<h2 class="section-title">The Lab</h2>
+
+			<article class="lab-entry">
+				<h3 class="lab-title">
+					<a href="https://github.com/Chatit-cloud/BEE2BEE" target="_blank">BEE2BEE</a>
+					<span class="lab-tag">(P2P AI Network)</span>
+				</h3>
+				<p class="lab-description">
+					A decentralized experiment in routing AI inference requests. Allows users to share local
+					GPU compute power across a peer-to-peer network, bypassing centralized cloud APIs.
+				</p>
+			</article>
+
+			<article class="lab-entry">
+				<h3 class="lab-title">
+					<a href="https://akamaar.dev" target="_blank">Akamaar.dev</a>
+					<span class="lab-tag">(My Firm)</span>
+				</h3>
+				<p class="lab-description">
+					My commercial consultancy. We specialize in rescuing legacy codebases and shipping
+					greenfield MVPs for Seed-stage founders.
+				</p>
+			</article>
+		</section>
+
+		<!-- Writing Section (Link to Articles) -->
+		<section class="work-section">
+			<h2 class="section-title">Writing</h2>
+			<p class="writing-intro">
+				Technical notes on systems architecture, performance optimization, and privacy engineering.
+			</p>
+			<a href="/articles" class="writing-link">View All Articles →</a>
+		</section>
+	</div>
 </main>
