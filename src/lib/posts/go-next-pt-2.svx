@@ -1,5 +1,5 @@
 ---
-title: "Go 1.22, SQLite, and Next.js: The "Boring" Backend"
+title: 'Go 1.22, SQLite, and Next.js: The "Boring" Backend'
 date: "2026-02-06"
 tags: ["NextJS", "Go", "SQLite", "Backend"]
 excerpt: "Setting up the plumbing. Why plain Go is better than any framework, battling CORS, and connecting a NextJS frontend that feels suspiciously heavy for a task manager."

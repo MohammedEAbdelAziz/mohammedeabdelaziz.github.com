@@ -17,7 +17,12 @@ export const load: PageLoad = () => {
 			const slug = path.split('/').pop()?.replace('.svx', '') || '';
 			const meta = module.metadata;
 
-			if (meta?.date > new Date().toISOString()) {
+			if (!meta || !meta.title || !meta.date) {
+				console.error(`Invalid or missing metadata for post: ${path}`);
+				return null;
+			}
+
+			if (meta.date > new Date().toISOString()) {
 				return null; // Exclude future-dated articles
 			}
 
