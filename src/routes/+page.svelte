@@ -162,10 +162,10 @@
 					<p>
 						<strong>The Engineering:</strong> Optimized a DistilRoBERTa transformer model using
 						<strong>ONNX Runtime</strong>
-						and <strong>Dynamic Quantization</strong>. Achieved 2ms inference speeds on standard
-						CPUs, reducing server costs to near-zero while maintaining 94% sentiment accuracy.
-						Implemented Celery for distributed task processing with 15-minute intervals to handle
-						high-volume news feeds while managing CPU load efficiently.
+						and <strong>Dynamic Quantization</strong>. Reduced server costs to near-zero while
+						maintaining 94% sentiment accuracy. Implemented Celery for distributed task processing
+						with 15-minute intervals to handle high-volume news feeds while managing CPU load
+						efficiently.
 					</p>
 					<p><strong>Stack:</strong> Python, ONNX Runtime, Celery.</p>
 				</div>
