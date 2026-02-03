@@ -42,7 +42,7 @@ To fit it into my constraints, I used a two-step optimization process:
 
 I ditched PyTorch for inference and moved to **ONNX Runtime**. It’s a cross-platform inference engine that is significantly faster and lighter on CPUs.
 
-The result? Inference times dropped to **~2ms on a standard CPU**, and the memory footprint shrank by nearly 1GB.
+The result? The memory footprint shrank by nearly 1GB.
 
 ### 2. The Engine: Celery & Redis
 
